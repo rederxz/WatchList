@@ -1,6 +1,8 @@
 import unittest
 
-from app import app, db, Movie, User, forge, initdb
+from watchlist import app, db
+from watchlist.commands import forge, initdb
+from watchlist.models import Movie, User
 
 
 class WatchlistTestCase(unittest.TestCase):
@@ -41,6 +43,24 @@ class WatchlistTestCase(unittest.TestCase):
         self.assertIn('Page Not Found - 404', data)
         self.assertIn('Go Back', data)
         self.assertEqual(response.status_code, 404)  # 判断响应状态码
+
+    # 测试 500 页面
+    def test_500_page(self):
+        # TODO 构造产生Internal Server Error的请求
+        response = self.client.get('/nothing')  # 传入目标 URL
+        data = response.get_data(as_text=True)
+        self.assertIn('Internel Server Error - 500', data)
+        self.assertIn('Go Back', data)
+        self.assertEqual(response.status_code, 500)  # 判断响应状态码
+
+    # 测试 400 页面
+    def test_400_page(self):
+        # TODO 构造产生Bad Request的请求
+        response = self.client.get('/ nothing')  # 传入目标 URL
+        data = response.get_data(as_text=True)
+        self.assertIn('Bad Request - 400', data)
+        self.assertIn('Go Back', data)
+        self.assertEqual(response.status_code, 400)  # 判断响应状态码
 
     # 测试主页
     def test_index_page(self):
